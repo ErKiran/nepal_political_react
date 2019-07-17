@@ -4,7 +4,6 @@ import SelectListGroup from './utils/SelectListGroup';
 import Introduction from './Introduction';
 import { get_Local_Name } from './utils/helper';
 
-
 class NepalPolitical extends Component {
     constructor() {
         super();
