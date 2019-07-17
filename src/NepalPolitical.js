@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Nepal } from 'nepal_political';
 import SelectListGroup from './utils/SelectListGroup';
 import Introduction from './Introduction';
+import { get_Local_Name } from './utils/helper';
 
 
 class NepalPolitical extends Component {
@@ -18,6 +19,16 @@ class NepalPolitical extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
     render() {
+        const opts = Nepal.LocalBodiesByDistrict(this.state.district);
+        const type = opts[0];
+        const types = [
+            'Municipality',
+            'Rular Municipality',
+            'Metropolitan',
+            'Sub-Metropolitan'
+        ]
+        const opt = (this.state.district) ? type : types;
+        const aa = get_Local_Name(this.state.localBody, Nepal, this.state.district);
         return (
             <div>
                 <form className="form-inline">
@@ -53,7 +64,18 @@ class NepalPolitical extends Component {
                                     type="text"
                                     value={this.state.localBody}
                                     onChange={this.onChange}
-                                    options={Nepal.LocalBodiesByDistrict(this.state.district)}
+                                    options={opt}
+                                    info="Choose the District"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <SelectListGroup
+                                    placeholder="Name of Local Goverment*"
+                                    name="localgovname"
+                                    type="text"
+                                    value={this.state.localgovname}
+                                    onChange={this.onChange}
+                                    options={aa}
                                     info="Choose the District"
                                 />
                             </div>
