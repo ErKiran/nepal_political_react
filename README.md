@@ -3,3 +3,4 @@
 #### Live Site: https://elegant-brown-f813c9.netlify.com/
 
 ##### This is implementation of NPM Library [nepal_political](https://github.com/ErKiran/nepal_political)
+![Demo](http://i68.tinypic.com/24pwcjo.png)
