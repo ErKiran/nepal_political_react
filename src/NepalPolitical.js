@@ -18,9 +18,23 @@ class NepalPolitical extends Component {
             previousState: '',
             previousDistrict: '',
             previousLocBodyName: '',
-            previousLocalBody: '',
-            localBodyChoosen: false
+            previousLocalBody: ''
         };
+    }
+    detectStateChange() {
+        if (this.state.state !== this.state.previousState) {
+            const current = this.state.districtOpts;
+            const correctCurrent = Nepal.DistrictByProvince(this.state.state);
+            const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
+            if (check === false) {
+                const districtOptions = Nepal.DistrictByProvince(this.state.state);
+                this.setState({ districtOpts: districtOptions });
+                this.setState({ district: districtOptions[0] })
+            }
+            if (this.state.districtOpts.length === 0) {
+                this.setState({ districtOpts: Nepal.DistrictByProvince(this.state.state) })
+            }
+        }
     }
     detectDistrictChange() {
         if (this.state.district !== this.state.previousDistrict) {
@@ -29,6 +43,7 @@ class NepalPolitical extends Component {
             const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
             if (check === false) {
                 this.setState({ localBodyOption: Nepal.LocalBodiesByDistrict(this.state.district)[0] })
+                this.setState({ localBody: Nepal.LocalBodiesByDistrict(this.state.district)[0][0] })
             }
             if (this.state.localBodyOption.length === 0) {
                 this.setState({ localBodyOption: Nepal.LocalBodiesByDistrict(this.state.district)[0] })
@@ -41,32 +56,22 @@ class NepalPolitical extends Component {
             const correctCurrent = get_Local_Name(this.state.localBody, Nepal, this.state.district)
             const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
             if (check === false) {
-                this.setState({ localGovOptions: get_Local_Name(this.state.localBody, Nepal, this.state.district) })
+                this.setState({ localGovOptions: correctCurrent });
+                this.setState({ localgovname: correctCurrent[0] })
             }
         }
 
-    }
-    detectStateChange() {
-        if (this.state.state !== this.state.previousState) {
-            const current = this.state.districtOpts;
-            const correctCurrent = Nepal.DistrictByProvince(this.state.state);
-
-            const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
-            if (check === false) {
-                const districtOptions = Nepal.DistrictByProvince(this.state.state);
-                console.log(districtOptions)
-                this.setState({ districtOpts: districtOptions });
-                this.setState({ district: districtOptions[0] })
-            }
-            if (this.state.districtOpts.length === 0) {
-                this.setState({ districtOpts: Nepal.DistrictByProvince(this.state.state) })
-            }
-        }
     }
     componentDidUpdate() {
         this.detectStateChange()
         this.detectDistrictChange()
         this.detectLocalBodyChange()
+    }
+
+    componentDidMount() {
+        if (this.state.state === '') {
+            this.setState({ state: 'Province No. 1' })
+        }
     }
 
 
@@ -77,7 +82,7 @@ class NepalPolitical extends Component {
             previousState: this.state.state,
             previousDistrict: this.state.district,
             previousLocBodyName: this.state.previousLocBodyName,
-            previousLocalBody: this.state.previousLocalBody
+            previousLocalBody: this.state.previousLocalBody,
         })
     }
     render() {
