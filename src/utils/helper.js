@@ -1,8 +1,6 @@
 function get_Local_Name(bb, Nepal, dis) {
     if (bb === 'Municipality') {
-
         const res = Nepal.MunicipalitiesByDistrict(dis);
-        console.log(res, dis, "Should be something");
         return res;
     }
     else if (bb === 'Rular Municipality') {

@@ -2,9 +2,9 @@ import React from 'react';
 
 const SelectListGroup = ({ name, value, onChange, options, input }) => {
   const selectOptions = options.map(option => (
-    <option key={option} value={option}>
+    < option key={option} value={option} >
       {option}
-    </option>
+    </option >
 
   ));
   return (

@@ -10,24 +10,78 @@ class NepalPolitical extends Component {
         this.state = {
             state: '',
             localBody: '',
+            localBodyOption: [],
             district: '',
-            localgovname: ''
+            districtOpts: [],
+            localGovOptions: [],
+            localgovname: '',
+            previousState: '',
+            previousDistrict: '',
+            previousLocBodyName: '',
+            previousLocalBody: '',
+            localBodyChoosen: false
         };
     }
+    detectDistrictChange() {
+        if (this.state.district !== this.state.previousDistrict) {
+            const current = this.state.localBodyOption;
+            const correctCurrent = Nepal.LocalBodiesByDistrict(this.state.district)[0];
+            const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
+            if (check === false) {
+                this.setState({ localBodyOption: Nepal.LocalBodiesByDistrict(this.state.district)[0] })
+            }
+            if (this.state.localBodyOption.length === 0) {
+                this.setState({ localBodyOption: Nepal.LocalBodiesByDistrict(this.state.district)[0] })
+            }
+        }
+    }
+    detectLocalBodyChange() {
+        if (this.state.previousLocalBody !== this.state.localBody) {
+            const current = this.state.localGovOptions;
+            const correctCurrent = get_Local_Name(this.state.localBody, Nepal, this.state.district)
+            const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
+            if (check === false) {
+                this.setState({ localGovOptions: get_Local_Name(this.state.localBody, Nepal, this.state.district) })
+            }
+        }
+
+    }
+    detectStateChange() {
+        if (this.state.state !== this.state.previousState) {
+            const current = this.state.districtOpts;
+            const correctCurrent = Nepal.DistrictByProvince(this.state.state);
+
+            const check = JSON.stringify(current) === JSON.stringify(correctCurrent);
+            if (check === false) {
+                const districtOptions = Nepal.DistrictByProvince(this.state.state);
+                console.log(districtOptions)
+                this.setState({ districtOpts: districtOptions });
+                this.setState({ district: districtOptions[0] })
+            }
+            if (this.state.districtOpts.length === 0) {
+                this.setState({ districtOpts: Nepal.DistrictByProvince(this.state.state) })
+            }
+        }
+    }
+    componentDidUpdate() {
+        this.detectStateChange()
+        this.detectDistrictChange()
+        this.detectLocalBodyChange()
+    }
+
+
     onChange = (e) => {
+        e.preventDefault()
         this.setState({ [e.target.name]: e.target.value });
+        this.setState({
+            previousState: this.state.state,
+            previousDistrict: this.state.district,
+            previousLocBodyName: this.state.previousLocBodyName,
+            previousLocalBody: this.state.previousLocalBody
+        })
     }
     render() {
-        const opts = Nepal.LocalBodiesByDistrict(this.state.district);
-        const type = opts[0];
-        const types = [
-            'Municipality',
-            'Rular Municipality',
-            'Metropolitan',
-            'Sub-Metropolitan'
-        ]
-        const opt = (this.state.district) ? type : types;
-        const aa = get_Local_Name(this.state.localBody, Nepal, this.state.district);
+        console.log(this.state)
         return (
             <div>
                 <form className="form-inline">
@@ -52,7 +106,7 @@ class NepalPolitical extends Component {
                                     type="text"
                                     value={this.state.district}
                                     onChange={this.onChange}
-                                    options={Nepal.DistrictByProvince(this.state.state)}
+                                    options={this.state.districtOpts}
                                     info="Choose the District"
                                 />
                             </div>
@@ -63,8 +117,8 @@ class NepalPolitical extends Component {
                                     type="text"
                                     value={this.state.localBody}
                                     onChange={this.onChange}
-                                    options={opt}
-                                    info="Choose the District"
+                                    options={this.state.localBodyOption}
+                                    info="Choose the Local Bodies Type"
                                 />
                             </div>
                             <div className="form-group">
@@ -74,8 +128,8 @@ class NepalPolitical extends Component {
                                     type="text"
                                     value={this.state.localgovname}
                                     onChange={this.onChange}
-                                    options={aa}
-                                    info="Choose the District"
+                                    options={this.state.localGovOptions}
+                                    info="Choose the Local Goverment Name"
                                 />
                             </div>
                         </div>
