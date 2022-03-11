@@ -6,14 +6,27 @@ on:
       - "master"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [15.x]
+ Deploy:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
-    steps:
-      - uses: actions/checkout@v1
-      - run: npm install 
-      - run: npm run build
-      - run: npm test    
+    - name: Setup Node
+      uses: actions/setup-node@v2
+
+    - name: Install Dependencies
+      run: npm install 
+
+    - name: Build static file
+      run: npm run build
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with: 
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Deploy static site to S3 Bucket
+      run: aws s3 sync ./build s3://nepal-political
